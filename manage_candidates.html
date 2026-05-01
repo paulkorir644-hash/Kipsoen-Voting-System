@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Manage Candidates - {{ pos.name }}{% endblock %}
+{% block content %}
+<h2>{{ pos.name }} Candidates</h2>
+<form method="POST" enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-md-5"><input type="text" name="name" class="form-control" placeholder="Candidate Name" required></div>
+    </div>
+    <div class="mb-3 mt-3">
+        <textarea name="manifesto" class="form-control" rows="3" placeholder="Manifesto (optional)"></textarea>
+    </div>
+    <div class="mb-3">
+        <input type="file" name="photo" class="form-control" accept="image/*">
+    </div>
+    <button type="submit" class="btn btn-success">Add Candidate</button>
+</form>
+
+<table class="table table-striped mt-4">
+    <thead class="table-dark">
+        <tr><th>Photo</th><th>Name</th><th>Manifesto</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+    {% for cand in candidates %}
+    <tr>
+        <td>
+            {% if cand.photo %}
+                <img src="{{ url_for('static', filename=cand.photo) }}" width="60" height="60" class="rounded-circle" style="object-fit:cover;">
+            {% else %}
+                <i class="fas fa-user-circle fa-3x text-muted"></i>
+            {% endif %}
+        </td>
+        <td>{{ cand.name }}</td>
+        <td>{{ cand.manifesto|truncate(100) if cand.manifesto else '—' }}</td>
+        <td>
+            <a href="{{ url_for('edit_candidate', cand_id=cand.id) }}" class="btn btn-sm btn-warning">Edit</a>
+            <a href="{{ url_for('delete_candidate', cand_id=cand.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Delete this candidate?')">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">← Back to Dashboard</a>
+{% endblock %}

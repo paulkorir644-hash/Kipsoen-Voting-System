@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Edit Candidate{% endblock %}
+{% block content %}
+<div class="card mx-auto" style="max-width: 600px;">
+    <div class="card-header">Edit Candidate</div>
+    <div class="card-body">
+        <form method="POST" enctype="multipart/form-data">
+            <div class="mb-3"><label>Name</label><input type="text" name="name" value="{{ cand.name }}" class="form-control" required></div>
+            <div class="mb-3"><label>Manifesto</label><textarea name="manifesto" class="form-control" rows="5">{{ cand.manifesto or '' }}</textarea></div>
+            <div class="mb-3">
+                <label>Current Photo</label><br>
+                {% if cand.photo %}<img src="{{ url_for('static', filename=cand.photo) }}" width="120" class="rounded mb-2"><br>{% endif %}
+                <label>New Photo (optional)</label>
+                <input type="file" name="photo" class="form-control" accept="image/*">
+            </div>
+            <button type="submit" class="btn btn-primary">Update Candidate</button>
+            <a href="{{ url_for('manage_candidates', pos_id=cand.position_id) }}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

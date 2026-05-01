@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Add Voter{% endblock %}
+{% block content %}
+<div class="card mx-auto" style="max-width: 500px;">
+    <div class="card-header">Add New Voter</div>
+    <div class="card-body">
+        <form method="POST">
+            <div class="mb-3"><label>Name</label><input type="text" name="name" class="form-control" required></div>
+            <div class="mb-3"><label>Student ID</label><input type="text" name="student_id" class="form-control" required></div>
+            <button type="submit" class="btn btn-primary w-100">Add Voter</button>
+        </form>
+        <div class="text-center mt-3">
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">← Back to Dashboard</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

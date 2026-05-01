@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block navbar %}
+<ul class="navbar-nav ms-auto">
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('add_voter') }}">Add Voter</a></li>
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('bulk_voters') }}">Bulk Upload Voters</a></li>
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('voters_list') }}">Voters List</a></li>
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('add_position') }}">Add Position</a></li>
+    <li class="nav-item"><a class="nav-link text-warning" href="{{ url_for('admin_logout') }}">Logout</a></li>
+</ul>
+{% endblock %}
+{% block content %}
+<h1 class="mb-4"><i class="fas fa-tachometer-alt"></i> Admin Dashboard</h1>
+
+<!-- Reset Votes Button -->
+<div class="text-end mb-4">
+    <form method="POST" action="{{ url_for('reset_votes') }}" onsubmit="return confirm('Reset ALL votes and turnout? This cannot be undone!')">
+        <button type="submit" class="btn btn-danger"><i class="fas fa-trash"></i> Reset All Votes</button>
+    </form>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4"><div class="card text-white bg-primary"><div class="card-body"><h5>Registered Voters</h5><h2>{{ total_registered }}</h2></div></div></div>
+    <div class="col-md-4"><div class="card text-white bg-success"><div class="card-body"><h5>Votes Cast</h5><h2>{{ total_voted }}</h2></div></div></div>
+    <div class="col-md-4"><div class="card text-white bg-warning"><div class="card-body"><h5>Turnout</h5><h2>{{ turnout }}%</h2></div></div></div>
+</div>
+
+<!-- Overall Turnout Pie Chart -->
+<div class="card mb-4">
+    <div class="card-header"><strong>Overall Voter Turnout</strong></div>
+    <div class="card-body">
+        <canvas id="turnoutPie" height="250"></canvas>
+    </div>
+</div>
+
+<h4 class="mb-3">Live Results by Position</h4>
+{% for data in position_data %}
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between">
+        <strong>{{ data.name }}</strong>
+        <a href="{{ url_for('export_position', position_id=data.id) }}" class="btn btn-sm btn-outline-success"><i class="fas fa-file-excel"></i> Export Excel</a>
+    </div>
+    <div class="card-body">
+        <a href="{{ url_for('manage_candidates', pos_id=data.id) }}" class="btn btn-sm btn-primary mb-3">Manage Candidates</a>
+        {% if data.data %}
+        <canvas id="chart{{ data.id }}" height="120"></canvas>
+        {% else %}
+        <p class="text-muted">No candidates yet.</p>
+        {% endif %}
+    </div>
+</div>
+<script>
+    new Chart(document.getElementById('chart{{ data.id }}'), {
+        type: 'bar',
+        data: { labels: {{ data.labels|tojson }}, datasets: [{ label: 'Votes', data: {{ data.data|tojson }}, backgroundColor: '#0055cc' }] },
+        options: { responsive: true, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+    });
+</script>
+{% endfor %}
+
+<script>
+    new Chart(document.getElementById('turnoutPie'), {
+        type: 'pie',
+        data: {
+            labels: ['Voted', 'Not Voted'],
+            datasets: [{ data: [{{ total_voted }}, {{ total_registered - total_voted }}], backgroundColor: ['#28a745', '#6c757d'] }]
+        },
+        options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+    });
+</script>
+{% endblock %}

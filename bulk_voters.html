@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Bulk Upload Voters{% endblock %}
+{% block content %}
+<div class="card mx-auto" style="max-width: 600px;">
+    <div class="card-header">Bulk Voter Upload (CSV)</div>
+    <div class="card-body">
+        <form method="POST" enctype="multipart/form-data">
+            <input type="file" name="file" class="form-control" accept=".csv" required>
+            <button type="submit" class="btn btn-success w-100 mt-3">Upload CSV & Add Voters</button>
+        </form>
+        <div class="alert alert-info mt-4">
+            <strong>Example CSV:</strong><br>
+            Name,Student ID<br>
+            John Doe,NP/2026/001<br>
+            Jane Smith,NP/2026/002
+        </div>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">← Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}
